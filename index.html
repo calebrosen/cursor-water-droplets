@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Droplet Cursor Effect</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #f0f0f0;
+            cursor: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #cursor {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            animation: drip 2s infinite ease-in-out;
+        }
+
+        @keyframes drip {
+            0%,
+
+            20% {
+                transform: translate(-50%, -50%) translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            35% {
+                transform: translate(-50%, -50%) translateY(35px) scale(0.8);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) translateY(50px) scale(0.6);
+                opacity: 0.6;
+            }
+
+            75% {
+                transform: translate(-50%, -50%) translateY(75px) scale(0.3);
+                opacity: 0.35;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .droplet {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            pointer-events: none;
+            opacity: 0.7;
+            animation: fall var(--fall-speed, 5s) linear forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+
+        .slider-container {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slider-container">
+        <label for="speed-slider">Adjust Falling Speed:</label>
+        <input type="range" id="speed-slider" min="1" max="15" step="0.05" value="7.5">
+    </div>
+
+    <div id="cursor"></div>
+
+    <script>
+        const speedSlider = document.getElementById('speed-slider');
+        const root = document.documentElement;
+
+        //updating fall speed
+        speedSlider.addEventListener('input', (e) => {
+            const sliderValue = e.target.value;
+            const speed = 16 - sliderValue;
+            root.style.setProperty('--fall-speed', `${speed}s`);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.getElementById('cursor');
+            cursor.style.left = `${e.clientX}px`;
+            cursor.style.top = `${e.clientY}px`;
+
+            // creating the droplet
+            const droplet = document.createElement('div');
+            droplet.classList.add('droplet');
+            droplet.style.left = `${e.clientX}px`;
+            droplet.style.top = `${e.clientY}px`;
+
+            // droplet SVG
+            droplet.innerHTML = `
+                <svg width="20" height="30" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M30 80C20 80 10 70 10 60C10 40 30 0 30 0C30 0 50 40 50 60C50 70 40 80 30 80Z" fill="rgba(30, 144, 255, 0.5)"/>
+                </svg>`;
+            document.body.appendChild(droplet);
+
+            // removing the droplet
+            droplet.addEventListener('animationend', () => {
+                droplet.remove();
+            });
+        });
+    </script>
+</body>
+
+</html>
